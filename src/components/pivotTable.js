@@ -8,6 +8,7 @@ class PivotTable extends Component {
         states: [],
         categories: []
     }
+    status = []
 
     componentDidMount() {
         this.getData();
@@ -27,7 +28,7 @@ class PivotTable extends Component {
             })
             .then(myJson => {
                 this.setState({
-                    data: [...this.state.data, ...myJson]
+                    data: [...this.state.data, ...this.prepareDate(myJson)]
                 })
                 this.prepareDate(this.state.data)
             })
@@ -57,6 +58,7 @@ class PivotTable extends Component {
         let dataObj = {
             category: '',
             subcategories: [],
+            sum:0,
 
         }
         let subCategoryObj = {
@@ -88,12 +90,33 @@ class PivotTable extends Component {
         this.setState({
             categories: [...this.state.categories, ...categories]
         })
-
+        // console.log(data)
+        // var cats = {}
+        // for (let i = 0; i < categories.length; i++) {
+        //     const cat = categories[i];
+        //
+        //     console.log(this.cats)
+        //     let subcat = {}
+        //     this.cats[cat]=[];
+        //     let ar = [];
+        //     for (let x = 0; x < data.length; x++) {
+        //         if (data[x]['category'] === cat) {
+        //             console.log(data[x]['category'])
+        //             this.cats[data[x]['category']]={}
+        //             ar.push([data[x]['subCategory'],data[x]['state'], data[x]['sales']])
+        //             this.cats[cat]=ar
+        //         }
+        //
+        //     }
+        // }
+        // console.log("alls",console.log(Object.keys(this.cats) ))
         for (let i = 0; i < categories.length; i++) {
+            console.log("Category")
+            let sum = 0;
             const cat = categories[i];
+            let states = [];
+            let subcategories = [];
             for (let x = 0; x < data.length; x++) {
-                let states = [];
-                let subcategories = [];
                 if (data[x]['category'] === cat) {
                     subCategoryObj = {
                         subcategory: data[x]['subCategory'],
@@ -109,27 +132,36 @@ class PivotTable extends Component {
                         states: states
                     }
 
+                    sum+=data[x]['sales']
+                    // console.log(sum)
 
                     subcategories.push(subCategoryObj);
 
-                    dataObj = {
-                        category: cat,
-                        subcategories: subcategories
-                    }
-                    groupedData.push(dataObj)
+
                 }
             }
+            dataObj = {
+                category: cat,
+                subcategories: subcategories,
+            }
+            groupedData.push(dataObj)
+            groupedData[i]['sum']=sum
+            this.status = groupedData
+                console.log("data",groupedData)
+            console.log("dta",this.state.data)
 
         }
 
         // groupedData = this.getUniqueListBy(groupedData, 'category')
         console.log('all', groupedData);
+        return groupedData;
     }
     getUniqueListBy(arr, key) {
         return [...new Map(arr.map(item => [item[key], item])).values()]
     }
 
     render() {
+        console.log(this.status, "stats")
         return (
             <div>
                 <h1>Pinhole Press Test</h1>
@@ -149,23 +181,25 @@ class PivotTable extends Component {
                                             <th >Category</th>
                                             <th >Sub Category</th>
                                             {this.state.states.map((state, index) => (
-                                                <th key={index}>{state}</th>
+                                                <th key={state} id={state} >{state}</th>
                                             ))}
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {
-                                            this.state.categories.map((category, index) => (
-                                                <tr key={index}>
-                                                    <td>{category}</td>
+                                            this.state.data.map(category => (
+                                                <tr key={category.category}>
+                                                    <td>{category.category}</td>
 
                                                     <td>
                                                         {
-                                                            this.state.data.map((data, index) => (
+                                                            category.subcategories.map(subcat => (
 
                                                                 <div>
                                                                     {
-                                                                        data.category === category ? data.subCategory : ''
+
+                                                                        subcat.subcategory
+                                                                        // data.category === category ? data.subCategory : ''
                                                                     }
                                                                 </div>
                                                             ))
@@ -173,19 +207,25 @@ class PivotTable extends Component {
 
                                                     </td>
                                                     {
-                                                        this.state.states.map((state, index) => (
+
+                                                        category.subcategories.map(subcat => (
 
                                                             <td>
                                                                 {
-                                                                    this.state.data.map((data, index) => (
+
+                                                                    subcat.states.map(data => (
                                                                         <div>
                                                                             {
-                                                                                data.category === category ? data.sales : ''
+
+                                                                                document.getElementById(data.state).innerHTML === data.state ? data.sales : 'f'
                                                                             }
                                                                         </div>
                                                                     ))
                                                                 }
 
+                                                                {
+                                                                    category.sum
+                                                                }
                                                             </td>
                                                         ))
                                                     }
@@ -232,6 +272,7 @@ class PivotTable extends Component {
 
                     </tbody>
                 </table>
+
             </div>
         )
     }
