@@ -37,28 +37,10 @@ class PivotTable extends Component {
     prepareDate(data) {
         let groupedData = [];
 
-        // let dataObj = [
-        //     {
-        //         category: '',
-        //         subcategories: [
-        //             {
-        //                 subcategory: '',
-        //                 states: [
-        //                     {
-        //                         state: '',
-        //                         sales: ''
-        //                     }
-        //                 ]
-        //             }
-        //         ],
-
-        //     }
-        // ]
-
         let dataObj = {
             category: '',
             subcategories: [],
-            sum:0,
+            sum: 0,
 
         }
         let subCategoryObj = {
@@ -76,7 +58,6 @@ class PivotTable extends Component {
         }
         categories = [...new Set(categories)];
 
-        console.log('all categories', categories);
 
         let states = [];
         for (let i = 0; i < data.length; i++) {
@@ -90,28 +71,8 @@ class PivotTable extends Component {
         this.setState({
             categories: [...this.state.categories, ...categories]
         })
-        // console.log(data)
-        // var cats = {}
-        // for (let i = 0; i < categories.length; i++) {
-        //     const cat = categories[i];
-        //
-        //     console.log(this.cats)
-        //     let subcat = {}
-        //     this.cats[cat]=[];
-        //     let ar = [];
-        //     for (let x = 0; x < data.length; x++) {
-        //         if (data[x]['category'] === cat) {
-        //             console.log(data[x]['category'])
-        //             this.cats[data[x]['category']]={}
-        //             ar.push([data[x]['subCategory'],data[x]['state'], data[x]['sales']])
-        //             this.cats[cat]=ar
-        //         }
-        //
-        //     }
-        // }
-        // console.log("alls",console.log(Object.keys(this.cats) ))
+
         for (let i = 0; i < categories.length; i++) {
-            console.log("Category")
             let sum = 0;
             const cat = categories[i];
             let states = [];
@@ -132,7 +93,7 @@ class PivotTable extends Component {
                         states: states
                     }
 
-                    sum+=data[x]['sales']
+                    sum += data[x]['sales']
                     // console.log(sum)
 
                     subcategories.push(subCategoryObj);
@@ -145,23 +106,15 @@ class PivotTable extends Component {
                 subcategories: subcategories,
             }
             groupedData.push(dataObj)
-            groupedData[i]['sum']=sum
+            groupedData[i]['sum'] = sum
             this.status = groupedData
-                console.log("data",groupedData)
-            console.log("dta",this.state.data)
 
         }
-
-        // groupedData = this.getUniqueListBy(groupedData, 'category')
-        console.log('all', groupedData);
         return groupedData;
-    }
-    getUniqueListBy(arr, key) {
-        return [...new Map(arr.map(item => [item[key], item])).values()]
     }
 
     render() {
-        console.log(this.status, "stats")
+        console.log(this.state.data, "data")
         return (
             <div>
                 <h1>Pinhole Press Test</h1>
@@ -236,38 +189,6 @@ class PivotTable extends Component {
                                     </tbody>
                                 </table>
                             </td>
-                            {/* <td>
-                                <table className="table">
-                                    <thead>
-                                        <tr>
-                                            {this.state.states.map((state, index) => (
-                                                <th key={index}>{state}</th>
-                                            ))}
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {
-                                            this.state.states.map((state, index) => (
-
-                                                <td>
-                                                    {
-                                                        this.state.data.map((data, index) => (
-                                                            <div>
-                                                                {
-                                                                    data.state === state ? data.sales : 0
-                                                                }
-                                                            </div>
-                                                        ))
-                                                    }
-
-                                                </td>
-                                            ))
-                                        }
-
-
-                                    </tbody>
-                                </table>
-                            </td> */}
                         </tr>
 
                     </tbody>
